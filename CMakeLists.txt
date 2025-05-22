@@ -9,7 +9,6 @@ project(knowrob_cram_demo)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED
   COMPONENTS
-  knowrob_designator
 )
 
 ## System dependencies are found with CMake's conventions

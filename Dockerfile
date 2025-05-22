@@ -76,7 +76,7 @@ RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build
 
 # Build workspace with knowrob_designator
 WORKDIR $OVERLAY_WS/src
-ADD . $OVERLAY_WS//src/knowrob_cram_demo
+ADD . $OVERLAY_WS/src/knowrob_cram_demo
 WORKDIR $OVERLAY_WS
 RUN . /opt/ros/noetic/setup.sh && cd $OVERLAY_WS && catkin build
 RUN echo "source $OVERLAY_WS/devel/setup.bash" >> ~/.bashrc
