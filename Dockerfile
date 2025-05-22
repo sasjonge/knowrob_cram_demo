@@ -1,5 +1,23 @@
-FROM ros:noetic-ros-core
-MAINTAINER Sascha Jongebloed, jongebloed@uni-bremen.de
+ARG FROM_IMAGE=ros:noetic-ros-core
+ARG OVERLAY_WS=/opt/ros/overlay_ws
+
+FROM $FROM_IMAGE as cacher
+ARG OVERLAY_WS
+WORKDIR $OVERLAY_WS/src
+
+RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jre python3-catkin-tools -y && pip3 install pip --upgrade
+RUN pip3 install rosdep && rosdep init
+
+RUN vcs import --input https://raw.githubusercontent.com/Tigul/pycram-1/dev/rosinstall/pycram-https.rosinstall --skip-existing $OVERLAY_WS/src
+RUN rosdep update && rosdep install --from-paths $OVERLAY_WS/src --ignore-src -r -y
+
+RUN pip3 install --upgrade pip
+WORKDIR $OVERLAY_WS/src/pycram
+RUN pip3 install pycram_bullet==3.2.8 pathlib~=1.0.1 numpy==1.24.4 pytransform3d psutil==5.9.7 typing_extensions>=4.10.0 owlready2>=0.45 pynput~=1.7.7 dm_control \
+                trimesh==4.6.0 deprecated probabilistic_model>=6.0.2 random_events>=4.1.0 pint>=0.21.1 gymnasium  pin==2.7.0 inflection>=0.5.1 manifold3d==3.0.1 transforms3d python-box urdf_parser_py networkx
+
+EXPOSE 11311
+
 
 ENV SWI_HOME_DIR=/usr/lib/swi-prolog
 ENV LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/x86_64-linux:$LD_LIBRARY_PATH
@@ -47,25 +65,22 @@ RUN apt install -y swi-prolog libspdlog-dev \
     doxygen graphviz
 RUN apt install -y ros-noetic-tf2-geometry-msgs
 
-RUN mkdir /catkin_ws
-RUN mkdir /catkin_ws/src
-
 # Build workspace with knowrob
-WORKDIR /catkin_ws/src
+WORKDIR $OVERLAY_WS/src
 RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
 RUN git clone https://github.com/knowrob/knowrob_designator.git
-WORKDIR /catkin_ws
+WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
 RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build
 
 # Build workspace with knowrob_designator
-WORKDIR /catkin_ws/src
-ADD . /catkin_ws/src/knowrob_cram_demo
-WORKDIR /catkin_ws
-RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build
-RUN echo "source /catkin_ws/devel/setup.bash" >> /root/.bashrc
+WORKDIR $OVERLAY_WS/src
+ADD . $OVERLAY_WS//src/knowrob_cram_demo
+WORKDIR $OVERLAY_WS
+RUN . /opt/ros/noetic/setup.sh && cd $OVERLAY_WS && catkin build
+RUN echo "source $OVERLAY_WS/devel/setup.bash" >> ~/.bashrc
 
-COPY run_knowrob_designator.sh /run_knowrob_designator.sh
+COPY run_knowrob_cram_demo.sh /run_knowrob_cram_demo.sh
 
-ENTRYPOINT ["/run_knowrob_designator.sh"]
+ENTRYPOINT ["/run_knowrob_cram_demo.sh"]

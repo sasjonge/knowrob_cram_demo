@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Load KnowRob settings -->
+  <arg name="knowrob_settings" default="$(find knowrob_cram_demo)/settings/cram_demo.json" />
+  <env name="KNOWROB_SETTINGS" value="$(arg knowrob_settings)" />
+
+  <!-- Start KnowRob ROS bridge -->
+  <node name="knowrob_ros" pkg="knowrob_ros" type="knowrob-ros" cwd="node" output="screen" />
+
+  <!-- Start the knowrob_designator action server -->
+  <node name="knowrob_designator_service" pkg="knowrob_designator" type="knowrob_designator_service.py" output="screen" cwd="node" />
+</launch>
