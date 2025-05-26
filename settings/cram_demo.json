@@ -1,7 +1,10 @@
 {
     "logging": {
       "console-sink": { "level": "debug" },
-      "file-sink": { "level": "debug" }
+      "file-sink": {
+        "level": "debug",
+        "path": "/root"
+      }
     },
     "semantic-web": {
         "prefixes": [
