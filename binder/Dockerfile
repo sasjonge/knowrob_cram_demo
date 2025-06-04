@@ -29,7 +29,6 @@ RUN apt-get install -y \
 
 
 RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jre python3-catkin-tools -y && pip3 install pip --upgrade
-RUN pip3 install rosdep && rosdep init
 
 USER ${NB_USER}
 RUN mkdir -p $OVERLAY_WS/src
@@ -39,10 +38,8 @@ RUN rosdep update && rosdep install --from-paths $OVERLAY_WS/src --ignore-src -r
 USER root
 RUN pip3 install --upgrade pip
 WORKDIR $OVERLAY_WS/src/pycram
-RUN pip3 install pycram_bullet==3.2.8 pathlib~=1.0.1 numpy==1.24.4 pytransform3d psutil==5.9.7 typing_extensions>=4.10.0 owlready2==0.47 pynput~=1.7.7 dm_control \
-                trimesh==4.6.0 deprecated probabilistic_model>=6.0.2 random_events>=4.1.0 pint>=0.21.1 gymnasium  pin==2.7.0 inflection>=0.5.1 manifold3d==3.0.1 transforms3d python-box urdf_parser_py networkx
+RUN pip3 install -r requirements.txt
 EXPOSE 11311
-
 
 ENV SWI_HOME_DIR=/usr/lib/swi-prolog
 ENV LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/x86_64-linux:$LD_LIBRARY_PATH
@@ -125,6 +122,7 @@ RUN echo "source $OVERLAY_WS/devel/setup.bash" >> ~/.bashrc
 RUN echo "export KONCLUDE_PATH=${HOME}/konclude" >> ~/.bashrc
 
 WORKDIR $OVERLAY_WS/src/knowrob_cram_demo
+
 COPY --chown=${NB_USER}:users binder/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
