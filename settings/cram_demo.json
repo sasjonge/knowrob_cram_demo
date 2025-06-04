@@ -23,21 +23,17 @@
     ],
     "data-backends": [
       {
-        "name": "pl",
-        "type": "Prolog:rdf_db"
+        "type": "Redland",
+        "name": "redland",
+        "read-only": false
       }
-    ],
+    ], 
     "reasoner": [
       {
-        "name": "pl",
-        "type": "Prolog",
-        "data-backend": "pl",
-        "imports": [
-          {
-            "path": "../knowrob_cram_demo/src/objects.pl",
-            "format": "prolog"
-          }
-        ]
+        "type": "SOMADFLReasoner",
+        "name": "SOMADFLReasoner",
+        "module": "../knowrob_cram_demo/reasoner/dfl_reasoner.py",
+        "data-backend": "redland"
       }
-    ]
+  ]
   }
