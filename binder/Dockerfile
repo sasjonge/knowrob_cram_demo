@@ -1,6 +1,6 @@
 FROM intel4coro/base-notebook:20.04-noetic-vnc
-ARG ROS_WS=${HOME}/workspace/ros
-ARG OVERLAY_WS=${ROS_WS}
+ENV ROS_WS=${HOME}/workspace/ros
+ENV OVERLAY_WS=${ROS_WS}
 
 USER root
 
@@ -124,6 +124,20 @@ RUN echo "export KONCLUDE_PATH=${HOME}/konclude/Konclude" >> ~/.bashrc
 
 WORKDIR $OVERLAY_WS/src/knowrob_cram_demo
 
+RUN pip install service_identity
+RUN pip install netifaces
+
+# Jupyter Config
+COPY --chown=${NB_USER}:users binder/jupyter-config.json /opt/conda/share/jupyter/lab/settings/overrides.json
+
+RUN git config --global --add safe.directory ${PWD}
 COPY --chown=${NB_USER}:users binder/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+RUN pip install https://raw.githubusercontent.com/yxzhan/jupyterlab-rviz/master/dist/jupyterlab_rviz-0.3.1.tar.gz
+RUN mkdir -p /home/${NB_USER}/.ipython/profile_default/startup/
+
+RUN curl https://raw.githubusercontent.com/sunava/pycram/revision-binder-all-robots/binder/01-import.py -o /home/${NB_USER}/.ipython/profile_default/startup/01-import.py
+
+WORKDIR $OVERLAY_WS/src/knowrob_cram_demo
 
 ENTRYPOINT ["/entrypoint.sh"]
