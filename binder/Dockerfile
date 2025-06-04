@@ -95,6 +95,7 @@ WORKDIR $HOME
 RUN wget https://github.com/sasjonge/semantic-map-lab/raw/refs/heads/dev/konclude/Konclude
 # Install konclude
 COPY --chown=${NB_USER}:users konclude ${HOME}/konclude
+RUN chmod +x ${HOME}/konclude/Konclude
 ENV  PATH=${PATH}:${HOME}/konclude
 ENV  PYTHONPATH=${PYTHONPATH}:${HOME}/konclude
 
@@ -116,10 +117,10 @@ RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_designato
 RUN git clone https://github.com/sasjonge/knowrob_cram_demo.git -b add_designator_parsing
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
-RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build
+RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build -j4 -l4
 RUN echo "source $OVERLAY_WS/devel/setup.bash" >> ~/.bashrc
 # Export Konclude Path
-RUN echo "export KONCLUDE_PATH=${HOME}/konclude" >> ~/.bashrc
+RUN echo "export KONCLUDE_PATH=${HOME}/konclude/Konclude" >> ~/.bashrc
 
 WORKDIR $OVERLAY_WS/src/knowrob_cram_demo
 
