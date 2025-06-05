@@ -9,4 +9,6 @@ sleep 5
 roslaunch --wait knowrob_cram_demo knowrob.launch &
 cp ${ROS_WS}/src/knowrob_cram_demo/binder/webapps.json ${ROS_WS}/src/rvizweb/webapps/app.json
 
+jupyter lab workspaces import ${ROS_WS}/src/knowrob_cram_demo/binder/knowrob_cram_demo.jupyterlab-workspace
+
 xvfb-run exec "$@"
