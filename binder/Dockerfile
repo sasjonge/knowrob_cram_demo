@@ -113,7 +113,7 @@ RUN pip install -e .
 WORKDIR $OVERLAY_WS/src
 RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
-RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_designator_parsing
+RUN git clone https://github.com/knowrob/knowrob_designator.git
 ADD . $OVERLAY_WS/src/knowrob_cram_demo
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
