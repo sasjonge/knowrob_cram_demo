@@ -114,7 +114,6 @@ WORKDIR $OVERLAY_WS/src
 RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
 RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_designator_parsing
-RUN echo "clear cache"
 RUN git clone https://github.com/sasjonge/knowrob_cram_demo.git -b add_designator_parsing
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
