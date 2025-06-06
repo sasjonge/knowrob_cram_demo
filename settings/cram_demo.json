@@ -19,6 +19,22 @@
         {
           "path": "http://www.ease-crc.org/ont/SOMA.owl",
           "format": "rdf-xml"
+        },
+        {
+          "path": "../knowrob/owl/srdl2-comp.owl",
+          "format": "rdf-xml"
+        },
+        {
+          "path": "../knowrob/owl/srdl2-cap.owl",
+          "format": "rdf-xml"
+        },
+        {
+          "path": "../knowrob/owl/srdl2.owl",
+          "format": "rdf-xml"
+        },
+        {
+          "path": "../knowrob_cram_demo/owl/iai-apartment.owl",
+          "format": "rdf-xml"
         }
     ],
     "data-backends": [
