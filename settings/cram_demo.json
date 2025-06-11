@@ -12,7 +12,8 @@
           { "alias":  "owl", "uri":  "http://www.w3.org/2002/07/owl" },
           { "alias":  "rdf", "uri":  "http://www.w3.org/1999/02/22-rdf-syntax-ns" },
           { "alias":  "rdfs", "uri":  "http://www.w3.org/2000/01/rdf-schema" },
-          { "alias":  "xsd", "uri":  "http://www.w3.org/2001/XMLSchema" }
+          { "alias":  "xsd", "uri":  "http://www.w3.org/2001/XMLSchema" },
+          { "alias":  "dfl", "uri":  "http://www.ease-crc.org/ont/SOMA_DFL.owl" }
         ]
       },
       "data-sources": [
