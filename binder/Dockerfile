@@ -28,7 +28,7 @@ RUN apt-get install -y \
     pip3 install --upgrade pip
 
 
-RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jre python3-catkin-tools -y && pip3 install pip --upgrade
+RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jre python3-catkin-tools graphviz -y && pip3 install pip --upgrade
 
 USER ${NB_USER}
 RUN mkdir -p $OVERLAY_WS/src
