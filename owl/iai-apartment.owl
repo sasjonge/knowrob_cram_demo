@@ -5484,9 +5484,6 @@
         <rdf:type rdf:resource="http://www.ease-crc.org/ont/SOMA_DFL.owl#milk_carton.n.wn.artifact"/>
     </owl:NamedIndividual>
 
-    <owl:NamedIndividual rdf:about="https://ease-crc.org/ont/USD.owl#CerealBox1">
-        <rdf:type rdf:resource="http://www.ease-crc.org/ont/SOMA_DFL.owl#cereal_box.n.wn.artifact"/>
-    </owl:NamedIndividual>
 </rdf:RDF>
 
 

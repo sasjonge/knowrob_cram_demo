@@ -58,13 +58,17 @@ class SOMADFLReasoner(GoalDrivenReasoner):
         self.classes = set([self.reasoner.expandName(x) for x in self.reasoner.whatSubclasses('owl:Thing')])
         
     def _evaluateIsSubclassOf(self, goal, p, s, o, bounding):
+        print("Evaluating isSubclassOf goal, for triple (%s, %s, %s) with bounding %s" % (str(s), str(p), str(o), str(bounding)))
         if ((False, True) == bounding):
+            print("Evaluating isSubclassOf goal with o as variable: %s" % str(s))
             v = o
             retq = self.reasoner.whatSuperclasses(self.reasoner.expandName(str(s)))
         else:
+            print("Evaluating isSubclassOf goal with s as variable: %s" % str(o))
             v = s
             retq = self.reasoner.whatSubclasses(self.reasoner.expandName(str(o)))
         for sc in retq:
+            print("Adding subclass %s to goal" % sc)
             bdgs = Bindings()
             bdgs.set(v, IRIAtom(self.reasoner.expandName(sc)))
             goal.push(bdgs)
@@ -125,13 +129,17 @@ class SOMADFLReasoner(GoalDrivenReasoner):
 
     def evaluate(self, goal: Goal) -> bool:
         # Assume only simple goals for now.
+        print("Evaluating goal %s" % str(goal))
         literal = goal.formula().literals()[0].predicate()
         p = _iriOrVariable(self.reasoner, literal.functor())
         if p in self.simpleGoals:
             s : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
-            o : Term = _iriOrVariable(self.reasoner, literal.arguments()[1])
+            print("Evaluating goal %s with predicate %s" % (str(goal), str(p)))
+            o : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
+            print("Evaluating goal %s with subject %s and object %s" % (str(goal), str(s), str(o)))
             args = [x for x in [s, o] if not x.isVariable()]
             if p in self.inverseProperties:
+                print("Using inverse property %s for goal %s" % (str(p), str(goal)))
                 p = self.inverseProperties[p]
                 x = s
                 s = o
@@ -139,6 +147,7 @@ class SOMADFLReasoner(GoalDrivenReasoner):
             bounding = (s.isVariable(), o.isVariable())
             if (True, True) == bounding:
                 raise ValueError("Must specify at least one of the participants in the %s goal." % str(p))
+            print("Evaluating triple (%s, %s, %s) with bounding %s" % (str(s), str(p), str(o), str(bounding)))
             self.fnMap[p](goal, p, s, o, bounding)
         else: # useMatch goal
             task : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
