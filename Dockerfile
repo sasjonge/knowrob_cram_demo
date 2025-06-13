@@ -93,16 +93,17 @@ WORKDIR $HOME
 RUN wget https://github.com/sasjonge/semantic-map-lab/raw/refs/heads/dev/konclude/Konclude
 # Install konclude
 COPY --chown=${NB_USER}:users konclude ${HOME}/konclude
+RUN chmod +x ${HOME}/konclude/Konclude
 ENV  PATH=${PATH}:${HOME}/konclude
 ENV  PYTHONPATH=${PYTHONPATH}:${HOME}/konclude
 
 # Install SOMA DFL reasoner library
 WORKDIR $HOME
 RUN pip install inflection
-RUN git clone https://github.com/ease-crc/ease_lexical_resources.git 
+RUN git clone https://github.com/sasjonge/ease_lexical_resources.git 
 WORKDIR $HOME/ease_lexical_resources/
 RUN git fetch && \
-git checkout 880248886ed1bccacfbb86a37d2803312aa7122a
+git checkout 605caf8be29169dbdcd34ba0718c8079ebde8163
 WORKDIR $HOME/ease_lexical_resources/src
 RUN pip install -e .
 
@@ -110,19 +111,21 @@ RUN pip install -e .
 WORKDIR $OVERLAY_WS/src
 RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
-RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_designator_parsing
+RUN git clone https://github.com/knowrob/knowrob_designator.git
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
 RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build
 
 # Build workspace with knowrob_designator
 WORKDIR $OVERLAY_WS/src
+ADD knowrob_designator $OVERLAY_WS/src/knowrob_designator
+ADD knowrob_ros $OVERLAY_WS/src/knowrob_ros
 ADD . $OVERLAY_WS/src/knowrob_cram_demo
 WORKDIR $OVERLAY_WS
 RUN . /opt/ros/noetic/setup.sh && catkin build
 RUN echo "source $OVERLAY_WS/devel/setup.bash" >> ~/.bashrc
 # Export Konclude Path
-RUN echo "export KONCLUDE_PATH=${HOME}/konclude" >> ~/.bashrc
+RUN echo "export KONCLUDE_PATH=${HOME}/konclude/Konclude" >> ~/.bashrc
 
 COPY run_knowrob_cram_demo.sh /run_knowrob_cram_demo.sh
 
