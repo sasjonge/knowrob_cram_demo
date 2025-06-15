@@ -41,28 +41,6 @@ WORKDIR $OVERLAY_WS/src/pycram
 RUN pip3 install -r requirements.txt
 EXPOSE 11311
 
-USER ${NB_USER}
-# Giskard: Pybind + betterpybullet
-WORKDIR /home/${NB_USER} 
-RUN git clone https://github.com/pybind/pybind11.git \
-  && cd pybind11 \
-  && mkdir build \
-  && cd build \
-  && cmake .. -DCMAKE_BUILD_TYPE=Release -DPYBIND11_PYTHON_VERSION=3 -DPYBIND11_TEST=OFF
-USER root
-RUN cd pybind11/build && make install
-USER ${NB_USER}
-
-RUN git clone https://github.com/SemRoCo/bullet3.git
-COPY --chown=${NB_USER}:users binder/build_cmake_pybullet_3.10_double.sh /home/${NB_USER}/bullet3/
-RUN cd bullet3 && ./build_cmake_pybullet_3.10_double.sh
-ENV PYTHONPATH=${PYTHONPATH}:/home/${NB_USER}/bullet3/build_cmake/better_python:/home/${NB_USER}/bullet3/examples/pybullet
-
-
-# New geometry msgs
-WORKDIR ${OVERLAY_WS}/src/
-RUN git clone https://github.com/sunava/geometry2.git
-
 USER root
 
 ENV SWI_HOME_DIR=/usr/lib/swi-prolog
@@ -103,10 +81,8 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-catkin \
     ros-noetic-tf2-geometry-msgs \
     ros-noetic-xacro \
-    ros-noetic-moveit \
     ros-noetic-convex-decomposition \
     ros-noetic-ivcon \
-    ros-noetic-tf-conversions \
     swi-prolog*
 
 # KnowRob dependencies
@@ -146,8 +122,6 @@ RUN git clone https://github.com/knowrob/knowrob_designator.git
 RUN git clone https://github.com/PR2/pr2_common.git \
  && cd pr2_common \
  && git checkout b34703bcca2b07cadbc3777d3c504c232a0c0c28
-# pr2_kinematics on kinetic-devel
-RUN git clone -b kinetic-devel https://github.com/PR2/pr2_kinematics.git
 ADD . $OVERLAY_WS/src/knowrob_cram_demo
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
