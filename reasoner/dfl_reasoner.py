@@ -61,17 +61,17 @@ class SOMADFLReasoner(GoalDrivenReasoner):
         self.classes = set([self.reasoner.expandName(x) for x in self.reasoner.whatSubclasses('owl:Thing')])
         
     def _evaluateIsSubclassOf(self, goal, p, s, o, bounding):
-        print("Evaluating isSubclassOf goal, for triple (%s, %s, %s) with bounding %s" % (str(s), str(p), str(o), str(bounding)))
+        #print("Evaluating isSubclassOf goal, for triple (%s, %s, %s) with bounding %s" % (str(s), str(p), str(o), str(bounding)))
         if ((False, True) == bounding):
-            print("Evaluating isSubclassOf goal with o as variable: %s" % str(s))
+            #print("Evaluating isSubclassOf goal with o as variable: %s" % str(s))
             v = o
             retq = self.reasoner.whatSuperclasses(self.reasoner.expandName(str(s)))
         else:
-            print("Evaluating isSubclassOf goal with s as variable: %s" % str(o))
+            #print("Evaluating isSubclassOf goal with s as variable: %s" % str(o))
             v = s
             retq = self.reasoner.whatSubclasses(self.reasoner.expandName(str(o)))
         for sc in retq:
-            print("Adding subclass %s to goal" % sc)
+            #print("Adding subclass %s to goal" % sc)
             bdgs = Bindings()
             bdgs.set(v, IRIAtom(self.reasoner.expandName(sc)))
             goal.push(bdgs)
@@ -134,7 +134,7 @@ class SOMADFLReasoner(GoalDrivenReasoner):
 
     def evaluate(self, goal: Goal) -> bool:
         # Assume only simple goals for now.
-        print("Evaluating goal %s" % str(goal))
+        #print("Evaluating goal %s" % str(goal))
         literal = goal.formula().literals()[0].predicate()
         p = _iriOrVariable(self.reasoner, literal.functor())
         if p in self.simpleGoals:
@@ -144,7 +144,7 @@ class SOMADFLReasoner(GoalDrivenReasoner):
             #print("Evaluating goal %s with subject %s and object %s" % (str(goal), str(s), str(o)))
             args = [x for x in [s, o] if not x.isVariable()]
             if p in self.inverseProperties:
-                print("Using inverse property %s for goal %s" % (str(p), str(goal)))
+                #print("Using inverse property %s for goal %s" % (str(p), str(goal)))
                 p = self.inverseProperties[p]
                 x = s
                 s = o
@@ -156,11 +156,11 @@ class SOMADFLReasoner(GoalDrivenReasoner):
         # if it is usematchstorageplace, we can use the same logic as for useMatch
         elif p == self.useMatchStoragePlace:
             task : Term = _iriOrVariable(self.reasoner, IRIAtom(self.reasoner.expandName(repr("http://www.ease-crc.org/ont/SOMA_DFL.owl#store.v.wn.possession..place"))))
-            print("Evaluating useMatchStoragePlace goal %s" % str(task))
+            #print("Evaluating useMatchStoragePlace goal %s" % str(task))
             instrument : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
-            print("Evaluating useMatchStoragePlace goal with instrument %s" % str(instrument))
+            #print("Evaluating useMatchStoragePlace goal with instrument %s" % str(instrument))
             patient : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
-            print("Evaluating useMatchStoragePlace goal with patient %s" % str(patient))
+            #print("Evaluating useMatchStoragePlace goal with patient %s" % str(patient))
             # TODO: maybe implement questions of type "what could I do with these objects"
             if task.isVariable():
                 raise ValueError("Task must be specified for useMatch query")
@@ -179,14 +179,14 @@ class SOMADFLReasoner(GoalDrivenReasoner):
                     goal.push(bdgs)
 
             else:
-                print("useMatch patient %s, instrument %s, task %s" % (str(patient), str(instrument), str(task)))
+                #print("useMatch patient %s, instrument %s, task %s" % (str(patient), str(instrument), str(task)))
                 todo = self._ensureIndividual2Classes(patient)
-                print("Evaluating useMatch goal with todo %s" % str(todo))
+                #print("Evaluating useMatch goal with todo %s" % str(todo))
                 classes = set().union(*[self.reasoner.whatToolsCanPerformTaskOnObject(str(task), c) for c in todo])
                 classes = [self.reasoner.expandName(c) for c in classes]
-                print("Evaluating useMatch goal with classes %s" % str(classes))
+                #print("Evaluating useMatch goal with classes %s" % str(classes))
                 instances = set().union(*[self._ensureClass2Individuals(c) for c in classes])
-                print("Evaluating useMatch goal with instances %s" % str(instances))
+                #print("Evaluating useMatch goal with instances %s" % str(instances))
                 if (True, False) == bounding:
                     for i in instances:
                         bdgs = Bindings()
@@ -196,11 +196,11 @@ class SOMADFLReasoner(GoalDrivenReasoner):
                     goal.push(Bindings())
         else: # useMatch goal
             task : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
-            print("Evaluating useMatch goal %s" % str(task))
+            #print("Evaluating useMatch goal %s" % str(task))
             instrument : Term = _iriOrVariable(self.reasoner, literal.arguments()[1])
-            print("Evaluating useMatch goal with instrument %s" % str(instrument))
+            #print("Evaluating useMatch goal with instrument %s" % str(instrument))
             patient : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
-            print("Evaluating useMatch goal with patient %s" % str(patient))
+            #print("Evaluating useMatch goal with patient %s" % str(patient))
             # TODO: maybe implement questions of type "what could I do with these objects"
             if task.isVariable():
                 raise ValueError("Task must be specified for useMatch query")
@@ -219,14 +219,14 @@ class SOMADFLReasoner(GoalDrivenReasoner):
                     goal.push(bdgs)
 
             else:
-                print("useMatch patient %s, instrument %s, task %s" % (str(patient), str(instrument), str(task)))
+                #print("useMatch patient %s, instrument %s, task %s" % (str(patient), str(instrument), str(task)))
                 todo = self._ensureIndividual2Classes(patient)
-                print("Evaluating useMatch goal with todo %s" % str(todo))
+                #print("Evaluating useMatch goal with todo %s" % str(todo))
                 classes = set().union(*[self.reasoner.whatToolsCanPerformTaskOnObject(str(task), c) for c in todo])
                 classes = [self.reasoner.expandName(c) for c in classes]
-                print("Evaluating useMatch goal with classes %s" % str(classes))
+                #print("Evaluating useMatch goal with classes %s" % str(classes))
                 instances = set().union(*[self._ensureClass2Individuals(c) for c in classes])
-                print("Evaluating useMatch goal with instances %s" % str(instances))
+                #print("Evaluating useMatch goal with instances %s" % str(instances))
                 if (True, False) == bounding:
                     for i in instances:
                         bdgs = Bindings()
