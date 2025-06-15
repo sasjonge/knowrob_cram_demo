@@ -28,11 +28,11 @@ RUN apt-get install -y \
     pip3 install --upgrade pip
 
 
-RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jre python3-catkin-tools -y && pip3 install pip --upgrade
+RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jre python3-catkin-tools graphviz graphviz-dev -y && pip3 install pip --upgrade
 
 USER ${NB_USER}
 RUN mkdir -p $OVERLAY_WS/src
-RUN vcs import --input https://raw.githubusercontent.com/Tigul/pycram-1/dev/rosinstall/pycram-https.rosinstall --skip-existing $OVERLAY_WS/src
+RUN vcs import --input https://raw.githubusercontent.com/Tigul/pycram-1/knowrob-demo/rosinstall/pycram-https.rosinstall --skip-existing $OVERLAY_WS/src
 RUN rosdep update && rosdep install --from-paths $OVERLAY_WS/src --ignore-src -r -y
 
 USER root
