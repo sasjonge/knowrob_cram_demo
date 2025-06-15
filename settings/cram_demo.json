@@ -52,5 +52,5 @@
         "module": "../knowrob_cram_demo/reasoner/dfl_reasoner.py",
         "data-backend": "redland"
       }
-  ]
+    ]
   }

@@ -33,9 +33,10 @@
 
     <!-- http://knowrob.org/kb/urdf.owl#hasBaseLinkName -->
 
-    <owl:AnnotationProperty rdf:about="http://knowrob.org/kb/urdf.owl#hasBaseLinkName"/>
-    
 
+    <owl:DatatypeProperty rdf:about="http://knowrob.org/kb/urdf.owl#hasBaseLinkName">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////

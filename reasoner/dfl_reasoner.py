@@ -36,15 +36,18 @@ class SOMADFLReasoner(GoalDrivenReasoner):
         self.isConstituentOf = IRIAtom("http://www.ease-crc.org/ont/SOMA_DFL.owl#isConstituentOf")
         self.useMatchAtom = IRIAtom("http://www.ease-crc.org/ont/SOMA_DFL.owl#useMatch")
         self.useMatch = PredicateIndicator(self.useMatchAtom, 3)
+        self.useMatchStoragePlace = IRIAtom("http://www.ease-crc.org/ont/SOMA_DFL.owl#useAsStoragePlace")
         self.isInstanceOf = IRIAtom("http://www.ease-crc.org/ont/SOMA_DFL.owl#isInstanceOf")
         self.isSubclassOf = IRIAtom("http://www.ease-crc.org/ont/SOMA_DFL.owl#isSubclassOf")
         self.rdfType = IRIAtom("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+        self.rdfsSubClassOf = IRIAtom("http://www.w3.org/2000/01/rdf-schema#subClassOf")
         self.defineRelation(self.hasDisposition)
         self.defineRelation(self.hasPart)
         self.defineRelation(self.hasConstituent)
         self.defineRelation(self.isDispositionOf)
         self.defineRelation(self.isPartOf)
         self.defineRelation(self.isConstituentOf)
+        self.defineRelation(self.useMatchStoragePlace)
         self.defineRelation(self.useMatch)
         self.defineRelation(self.isInstanceOf)
         self.defineRelation(self.isSubclassOf)
@@ -115,6 +118,8 @@ class SOMADFLReasoner(GoalDrivenReasoner):
                 sc = self.reasoner.expandName(sc)
                 query_term = GraphSequence([GraphPattern(Variable("Z"), self.rdfType, IRIAtom(sc))])
                 self.storage().query(GraphQuery(query_term), lambda bindings : _addToResults(retq, "Z", bindings))
+                query_term2 = GraphSequence([GraphPattern(Variable("X"), self.rdfsSubClassOf, IRIAtom(sc)), GraphPattern(Variable("Z"), self.rdfType, Variable("X"))])
+                self.storage().query(GraphQuery(query_term2), lambda bindings : _addToResults(retq, "Z", bindings))
             retq = list(retq)
         return retq
                 
@@ -134,9 +139,9 @@ class SOMADFLReasoner(GoalDrivenReasoner):
         p = _iriOrVariable(self.reasoner, literal.functor())
         if p in self.simpleGoals:
             s : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
-            print("Evaluating goal %s with predicate %s" % (str(goal), str(p)))
+            #print("Evaluating goal %s with predicate %s" % (str(goal), str(p)))
             o : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
-            print("Evaluating goal %s with subject %s and object %s" % (str(goal), str(s), str(o)))
+            #print("Evaluating goal %s with subject %s and object %s" % (str(goal), str(s), str(o)))
             args = [x for x in [s, o] if not x.isVariable()]
             if p in self.inverseProperties:
                 print("Using inverse property %s for goal %s" % (str(p), str(goal)))
@@ -147,12 +152,15 @@ class SOMADFLReasoner(GoalDrivenReasoner):
             bounding = (s.isVariable(), o.isVariable())
             if (True, True) == bounding:
                 raise ValueError("Must specify at least one of the participants in the %s goal." % str(p))
-            print("Evaluating triple (%s, %s, %s) with bounding %s" % (str(s), str(p), str(o), str(bounding)))
             self.fnMap[p](goal, p, s, o, bounding)
-        else: # useMatch goal
-            task : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
-            instrument : Term = _iriOrVariable(self.reasoner, literal.arguments()[1])
-            patient : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
+        # if it is usematchstorageplace, we can use the same logic as for useMatch
+        elif p == self.useMatchStoragePlace:
+            task : Term = _iriOrVariable(self.reasoner, IRIAtom(self.reasoner.expandName(repr("http://www.ease-crc.org/ont/SOMA_DFL.owl#store.v.wn.possession..place"))))
+            print("Evaluating useMatchStoragePlace goal %s" % str(task))
+            instrument : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
+            print("Evaluating useMatchStoragePlace goal with instrument %s" % str(instrument))
+            patient : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
+            print("Evaluating useMatchStoragePlace goal with patient %s" % str(patient))
             # TODO: maybe implement questions of type "what could I do with these objects"
             if task.isVariable():
                 raise ValueError("Task must be specified for useMatch query")
@@ -171,10 +179,54 @@ class SOMADFLReasoner(GoalDrivenReasoner):
                     goal.push(bdgs)
 
             else:
+                print("useMatch patient %s, instrument %s, task %s" % (str(patient), str(instrument), str(task)))
                 todo = self._ensureIndividual2Classes(patient)
+                print("Evaluating useMatch goal with todo %s" % str(todo))
                 classes = set().union(*[self.reasoner.whatToolsCanPerformTaskOnObject(str(task), c) for c in todo])
                 classes = [self.reasoner.expandName(c) for c in classes]
+                print("Evaluating useMatch goal with classes %s" % str(classes))
                 instances = set().union(*[self._ensureClass2Individuals(c) for c in classes])
+                print("Evaluating useMatch goal with instances %s" % str(instances))
+                if (True, False) == bounding:
+                    for i in instances:
+                        bdgs = Bindings()
+                        bdgs.set(instrument, IRIAtom(self.reasoner.expandName(i)))
+                        goal.push(bdgs)
+                elif ((False, False) == bounding) and (str(instrument) in instances):
+                    goal.push(Bindings())
+        else: # useMatch goal
+            task : Term = _iriOrVariable(self.reasoner, literal.arguments()[0])
+            print("Evaluating useMatch goal %s" % str(task))
+            instrument : Term = _iriOrVariable(self.reasoner, literal.arguments()[1])
+            print("Evaluating useMatch goal with instrument %s" % str(instrument))
+            patient : Term = _iriOrVariable(self.reasoner, literal.arguments()[2])
+            print("Evaluating useMatch goal with patient %s" % str(patient))
+            # TODO: maybe implement questions of type "what could I do with these objects"
+            if task.isVariable():
+                raise ValueError("Task must be specified for useMatch query")
+            bounding = tuple([x.isVariable() for x in [instrument, patient]])
+            # TODO: maybe implement questions of type "are there any objects around I could use for task?"
+            if (True, True) == bounding:
+                raise ValueError("Must specify at least one of patient or instrument in a useMatch query")
+            if ((False, True) == bounding):
+                todo = self._ensureIndividual2Classes(instrument)
+                classes = set().union(*[self.reasoner.whatObjectsCanToolPerformTaskOn(str(task), c) for c in todo])
+                classes = [self.reasoner.expandName(c) for c in classes]
+                instances = set().union(*[self._ensureClass2Individuals(c) for c in classes])
+                for i in instances:
+                    bdgs = Bindings()
+                    bdgs.set(instrument, IRIAtom(self.reasoner.expandName(i)))
+                    goal.push(bdgs)
+
+            else:
+                print("useMatch patient %s, instrument %s, task %s" % (str(patient), str(instrument), str(task)))
+                todo = self._ensureIndividual2Classes(patient)
+                print("Evaluating useMatch goal with todo %s" % str(todo))
+                classes = set().union(*[self.reasoner.whatToolsCanPerformTaskOnObject(str(task), c) for c in todo])
+                classes = [self.reasoner.expandName(c) for c in classes]
+                print("Evaluating useMatch goal with classes %s" % str(classes))
+                instances = set().union(*[self._ensureClass2Individuals(c) for c in classes])
+                print("Evaluating useMatch goal with instances %s" % str(instances))
                 if (True, False) == bounding:
                     for i in instances:
                         bdgs = Bindings()
