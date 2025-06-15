@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install python3-pip python3-vcstool git default-jr
 
 USER ${NB_USER}
 RUN mkdir -p $OVERLAY_WS/src
+RUN echo "no cache"
 RUN vcs import --input https://raw.githubusercontent.com/sasjonge/pycram-1/knowrob-demo/rosinstall/pycram-https.rosinstall --skip-existing $OVERLAY_WS/src
 RUN rosdep update && rosdep install --from-paths $OVERLAY_WS/src --ignore-src -r -y
 
