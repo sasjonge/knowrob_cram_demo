@@ -111,7 +111,7 @@ RUN pip install inflection
 RUN git clone https://github.com/sasjonge/ease_lexical_resources.git 
 WORKDIR $HOME/ease_lexical_resources/
 RUN git fetch && \
-git checkout 605caf8be29169dbdcd34ba0718c8079ebde8163
+git checkout 99cc931f9efcbf68adfdf22b4283de20bc3ee02f
 WORKDIR $HOME/ease_lexical_resources/src
 RUN pip install -e .
 
@@ -120,11 +120,12 @@ WORKDIR $OVERLAY_WS/src
 RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
 RUN git clone https://github.com/knowrob/knowrob_designator.git
+RUN git clone git@github.com:sasjonge/knowrob_cram_demo.git -b full_demo
+
 # pr2_common at a specific commit
 RUN git clone https://github.com/PR2/pr2_common.git \
  && cd pr2_common \
  && git checkout b34703bcca2b07cadbc3777d3c504c232a0c0c28
-ADD . $OVERLAY_WS/src/knowrob_cram_demo
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
 RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build -j4 -l4
