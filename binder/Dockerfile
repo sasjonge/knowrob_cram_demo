@@ -121,7 +121,7 @@ RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
 RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_designator_parsing
 RUN git clone https://github.com/sasjonge/knowrob_cram_demo.git -b full_demo
-COPY --chown=${NB_USER}:users binder/me ${OVERLAY_WS}/src/me
+#COPY --chown=${NB_USER}:users binder/me ${OVERLAY_WS}/src/me
 
 # pr2_common at a specific commit
 RUN git clone https://github.com/PR2/pr2_common.git \
@@ -129,7 +129,7 @@ RUN git clone https://github.com/PR2/pr2_common.git \
  && git checkout b34703bcca2b07cadbc3777d3c504c232a0c0c28
 WORKDIR $OVERLAY_WS
 RUN /usr/bin/catkin init
-RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build -j4 -l4
+RUN . /opt/ros/noetic/setup.sh && /usr/bin/catkin build -j6 -l6
 RUN echo "source $OVERLAY_WS/devel/setup.bash" >> ~/.bashrc
 # Export Konclude Path
 RUN echo "export KONCLUDE_PATH=${HOME}/konclude/Konclude" >> ~/.bashrc
