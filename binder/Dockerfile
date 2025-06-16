@@ -119,7 +119,7 @@ RUN pip install -e .
 WORKDIR $OVERLAY_WS/src
 RUN git clone https://github.com/knowrob/knowrob.git
 RUN git clone https://github.com/knowrob/knowrob_ros.git
-RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_knowrob_designator
+RUN git clone https://github.com/knowrob/knowrob_designator.git -b add_designator_parsing
 RUN git clone https://github.com/sasjonge/knowrob_cram_demo.git -b full_demo
 
 # pr2_common at a specific commit
