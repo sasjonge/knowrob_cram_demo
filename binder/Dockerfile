@@ -104,8 +104,6 @@ COPY --chown=${NB_USER}:users konclude ${HOME}/konclude
 RUN chmod +x ${HOME}/konclude/Konclude
 ENV  PATH=${PATH}:${HOME}/konclude
 
-USER root
-
 # Install SOMA DFL reasoner library
 WORKDIR $HOME
 RUN pip3 install inflection
