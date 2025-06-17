@@ -18,6 +18,7 @@ world = BulletWorld(mode=WorldMode.DIRECT)
 pr2 = Object("pr2", Robot, "pr2.urdf", pose=PoseStamped.from_list([1.5, 2.15, 0]))
 milk = Object("milk", Milk, "milk.stl", pose=PoseStamped.from_list([2.1, 2.35, 0.8]))
 apartment = Object("apartment", Apartment, "apartment.urdf")
+
 v = VizMarkerPublisher()
 
 with simulated_robot:
