@@ -103,7 +103,7 @@ RUN wget https://github.com/sasjonge/semantic-map-lab/raw/refs/heads/dev/konclud
 COPY --chown=${NB_USER}:users konclude ${HOME}/konclude
 RUN chmod +x ${HOME}/konclude/Konclude
 ENV  PATH=${PATH}:${HOME}/konclude
-ENV  PYTHONPATH=${PYTHONPATH}:${HOME}/konclude
+ENV  PYTHONPATH=${PYTHONPATH}:${HOME}/konclude:/home/jovyan/ease_lexical_resources/src:/root/ease_lexical_resources/src/dfl
 
 # Install SOMA DFL reasoner library
 WORKDIR $HOME
