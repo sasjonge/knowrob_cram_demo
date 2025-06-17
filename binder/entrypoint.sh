@@ -8,6 +8,6 @@ roslaunch --wait rvizweb rvizweb.launch config_file:=${ROS_WS}/src/knowrob_cram_
 sleep 5
 roslaunch --wait knowrob_cram_demo knowrob.launch &
 
-jupyter lab workspaces import ${ROS_WS}/src/knowrob_cram_demo/binder/knowrob_cram_demo.jupyterlab-workspace
+jupyter lab workspaces import ${ROS_WS}/src/knowrob_cram_demo/binder/knowrob_cram_vnc.jupyterlab-workspace
 
 exec "$@"
