@@ -103,15 +103,20 @@ RUN wget https://github.com/sasjonge/semantic-map-lab/raw/refs/heads/dev/konclud
 COPY --chown=${NB_USER}:users konclude ${HOME}/konclude
 RUN chmod +x ${HOME}/konclude/Konclude
 ENV  PATH=${PATH}:${HOME}/konclude
-ENV  PYTHONPATH=${PYTHONPATH}:${HOME}/konclude:/home/jovyan/ease_lexical_resources/src:/root/ease_lexical_resources/src/dfl
+
+USER root
 
 # Install SOMA DFL reasoner library
 WORKDIR $HOME
 RUN pip install inflection
 RUN git clone https://github.com/sasjonge/ease_lexical_resources.git 
+ENV  PYTHONPATH=${PYTHONPATH}:${HOME}/konclude:/home/jovyan/ease_lexical_resources/src:/root/ease_lexical_resources/src/dfl
 WORKDIR $HOME/ease_lexical_resources/
 WORKDIR $HOME/ease_lexical_resources/src
 RUN pip install -e .
+
+USER ${NB_USER}
+
 
 # Build workspace with knowrob
 WORKDIR $OVERLAY_WS/src
