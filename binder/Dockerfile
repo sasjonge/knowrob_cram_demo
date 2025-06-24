@@ -4,8 +4,6 @@ ENV OVERLAY_WS=${ROS_WS}
 
 USER root
 
-RUN echo "binder no cache"
-
 # This steps seem to be necessary for now, TODO: check if this is still needed
 # ─── STEP A: Remove any pre-existing ROS list files ─────────────────────────────────
 RUN rm -f /etc/apt/sources.list.d/*ros*.list
